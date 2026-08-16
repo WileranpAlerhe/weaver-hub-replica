@@ -1,4 +1,9 @@
-/* Facebook Conversions API helpers (server-only) */
+/* Meta Pixel / Conversions API (server-only).
+   O access_token nunca sai deste módulo: não é retornado, logado nem exposto. */
+
+import { buildUserData, sha256Hex } from "@/lib/meta-normalize";
+
+const GRAPH_VERSION = "v23.0";
 
 export interface FbSettings {
   ga4_id: string | null;
@@ -10,17 +15,7 @@ export interface FbSettings {
 }
 
 export async function sha256(input: string): Promise<string> {
-  const buf = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(input));
-  return Array.from(new Uint8Array(buf))
-    .map((b) => b.toString(16).padStart(2, "0"))
-    .join("");
-}
-
-async function hashNorm(value?: string | null): Promise<string | undefined> {
-  if (!value) return undefined;
-  const v = value.trim().toLowerCase();
-  if (!v) return undefined;
-  return sha256(v);
+  return sha256Hex(input);
 }
 
 export async function getAdmin() {
@@ -39,7 +34,7 @@ export interface LeadRow {
   name?: string | null;
   email?: string | null;
   phone?: string | null;
-  cpf?: string | null;
+  cpf?: string | null; // nunca enviado à Meta
   amount_cents?: number | null;
   fbp?: string | null;
   fbc?: string | null;
@@ -48,75 +43,100 @@ export interface LeadRow {
   event_source_url?: string | null;
 }
 
-function splitName(name?: string | null) {
-  const parts = (name ?? "").trim().split(/\s+/).filter(Boolean);
-  return { fn: parts[0], ln: parts.length > 1 ? parts[parts.length - 1] : undefined };
+export interface CapiResult {
+  ok: boolean;
+  error?: string;
+  events_received?: number;
+  fbtrace_id?: string;
 }
 
-function onlyDigits(v?: string | null) {
-  return (v ?? "").replace(/\D/g, "");
+function isProduction(): boolean {
+  return process.env["NODE_ENV"] === "production" || Boolean(process.env["VERCEL"]);
 }
 
-/** Sends an event to the Meta Conversions API. Returns the API response (or an error object). */
+/** Envia um evento à Conversions API. Nunca lança; devolve resultado observável. */
 export async function sendCapiEvent(opts: {
   eventName: "InitiateCheckout" | "Purchase";
   eventId: string;
   lead: LeadRow;
   valueCents: number;
   eventTime?: number;
-}): Promise<{ ok: boolean; response?: unknown; error?: string }> {
+}): Promise<CapiResult> {
   const s = await getSettings();
   if (!s?.pixel_id || !s?.access_token) return { ok: false, error: "pixel_nao_configurado" };
 
   const { lead } = opts;
-  const { fn, ln } = splitName(lead.name);
-  const phone = onlyDigits(lead.phone);
+  const user_data = await buildUserData({
+    email: lead.email,
+    phone: lead.phone,
+    name: lead.name,
+    country: "br",
+    // identificador interno estável do lead (nunca o CPF)
+    externalId: lead.external_ref,
+    fbp: lead.fbp,
+    fbc: lead.fbc,
+    clientIp: lead.client_ip,
+    userAgent: lead.user_agent,
+  });
 
-  const user_data: Record<string, unknown> = {
-    em: [await hashNorm(lead.email)].filter(Boolean),
-    ph: [await hashNorm(phone ? (phone.length <= 11 ? "55" + phone : phone) : undefined)].filter(Boolean),
-    fn: [await hashNorm(fn)].filter(Boolean),
-    ln: [await hashNorm(ln)].filter(Boolean),
-    country: [await hashNorm("br")].filter(Boolean),
-    external_id: [await hashNorm(onlyDigits(lead.cpf) || lead.external_ref)].filter(Boolean),
+  const event: Record<string, unknown> = {
+    event_name: opts.eventName,
+    event_time: opts.eventTime ?? Math.floor(Date.now() / 1000),
+    event_id: opts.eventId,
+    action_source: "website",
+    user_data,
+    custom_data: {
+      currency: "BRL",
+      value: Number((opts.valueCents / 100).toFixed(2)),
+    },
   };
-  if (lead.fbp) user_data["fbp"] = lead.fbp;
-  if (lead.fbc) user_data["fbc"] = lead.fbc;
-  if (lead.client_ip) user_data["client_ip_address"] = lead.client_ip;
-  if (lead.user_agent) user_data["client_user_agent"] = lead.user_agent;
+  if (lead.event_source_url) event["event_source_url"] = lead.event_source_url;
 
-  const payload: Record<string, unknown> = {
-    data: [
-      {
-        event_name: opts.eventName,
-        event_time: opts.eventTime ?? Math.floor(Date.now() / 1000),
-        event_id: opts.eventId,
-        action_source: "website",
-        event_source_url: lead.event_source_url ?? undefined,
-        user_data,
-        custom_data: {
-          currency: "BRL",
-          value: Number((opts.valueCents / 100).toFixed(2)),
-          content_type: "product",
-        },
-      },
-    ],
-  };
-  if (s.test_event_code) payload["test_event_code"] = s.test_event_code;
+  const payload: Record<string, unknown> = { data: [event] };
+  // test_event_code apenas fora de produção
+  if (s.test_event_code && !isProduction()) payload["test_event_code"] = s.test_event_code;
 
   try {
     const r = await fetch(
-      `https://graph.facebook.com/v21.0/${encodeURIComponent(s.pixel_id)}/events?access_token=${encodeURIComponent(s.access_token)}`,
+      `https://graph.facebook.com/${GRAPH_VERSION}/${encodeURIComponent(s.pixel_id)}/events`,
       {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${s.access_token}`,
+        },
         body: JSON.stringify(payload),
       },
     );
-    const body = (await r.json().catch(() => ({}))) as unknown;
-    return r.ok ? { ok: true, response: body } : { ok: false, error: "meta_error", response: body };
+    const body = (await r.json().catch(() => ({}))) as {
+      events_received?: number;
+      fbtrace_id?: string;
+      error?: { message?: string; code?: number };
+    };
+
+    const result: CapiResult = { ok: r.ok && Number(body.events_received ?? 0) > 0 };
+    if (typeof body.events_received === "number") result.events_received = body.events_received;
+    if (body.fbtrace_id) result.fbtrace_id = body.fbtrace_id;
+    if (!result.ok) result.error = body.error?.message ?? `meta_http_${r.status}`;
+
+    // log seguro: sem token, CPF, e-mail, telefone ou hashes
+    console.log("[capi]", {
+      event_name: opts.eventName,
+      event_id: opts.eventId,
+      status: r.status,
+      events_received: result.events_received ?? 0,
+      fbtrace_id: result.fbtrace_id ?? null,
+      error: result.error ?? null,
+    });
+    return result;
   } catch (e) {
-    return { ok: false, error: (e as Error).message };
+    const msg = (e as Error).message;
+    console.log("[capi]", {
+      event_name: opts.eventName,
+      event_id: opts.eventId,
+      error: msg,
+    });
+    return { ok: false, error: msg };
   }
 }
 
