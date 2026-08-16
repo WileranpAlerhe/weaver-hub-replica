@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAdmin, getSettings, type LeadRow } from "@/lib/fb.server";
-import { sendUtmifyOrder, type UtmifyLead } from "@/lib/utmify.server";
+import { getAdmin, getSettings, sendCapiEvent, type LeadRow } from "@/lib/fb.server";
 
 const PAID = ["paid", "approved", "completed", "success", "confirmed", "pago", "aprovado"];
 const REFUNDED = ["refunded", "refund", "chargeback", "reembolsado", "estornado"];
@@ -105,15 +104,13 @@ export const Route = createFileRoute("/api/public/pinpay-webhook")({
         }
 
         const admin = await getAdmin();
-        type Lead = LeadRow &
-          UtmifyLead & {
-            id: string;
-            purchase_sent_at: string | null;
-            amount_cents: number;
-            pinpay_id?: string | null;
-            utmify_paid_sent_at?: string | null;
-            utmify_refunded_sent_at?: string | null;
-          };
+        type Lead = LeadRow & {
+          id: string;
+          purchase_sent_at: string | null;
+          purchase_event_id?: string | null;
+          amount_cents: number;
+          pinpay_id?: string | null;
+        };
         let lead: Lead | null = null;
         if (externalRef) {
           const { data } = await admin
@@ -160,49 +157,33 @@ export const Route = createFileRoute("/api/public/pinpay-webhook")({
         }
 
         // ---------- Reembolso ----------
+        // A Meta nao recebe evento de reembolso; apenas registramos o status do pedido.
         if (isRefund) {
           if (!(await claim("refunded"))) {
             return Response.json({ ok: true, duplicated: true, status: "refunded" });
           }
-          const utm = await sendUtmifyOrder({
-            lead: row,
-            status: "refunded",
-            valueCents,
-            orderId,
-          });
           if (row.id) {
             await admin
               .from("leads")
-              .update({
-                status: "refunded",
-                utmify_status: utm.ok ? "refunded" : "refund_error",
-                utmify_refunded_sent_at: utm.ok ? now : null,
-                updated_at: now,
-              })
+              .update({ status: "refunded", updated_at: now })
               .eq("id", row.id);
           }
-          if (!utm.ok) {
-            // libera a reserva para permitir nova tentativa em um webhook posterior
-            await admin
-              .from("payment_events")
-              .delete()
-              .eq("transaction_id", orderId)
-              .eq("status", "refunded");
-          }
-          return Response.json({ ok: utm.ok, utmify: utm.ok, error: utm.error ?? null });
+          return Response.json({ ok: true, status: "refunded" });
         }
 
         // ---------- Pagamento aprovado ----------
-        // Purchase para a Meta é enviado exclusivamente pela UTMify.
+        // Purchase e enviado exclusivamente aqui (server-side), uma unica vez.
         if (!(await claim("paid"))) {
           return Response.json({ ok: true, duplicated: true, status: "paid" });
         }
 
-        const utm = await sendUtmifyOrder({
+        const purchaseEventId = "purchase_" + orderId;
+        const capi = await sendCapiEvent({
+          eventName: "Purchase",
+          eventId: purchaseEventId,
           lead: row,
-          status: "paid",
           valueCents,
-          orderId,
+          eventTime: Math.floor(Date.now() / 1000),
         });
 
         if (row.id) {
@@ -211,14 +192,15 @@ export const Route = createFileRoute("/api/public/pinpay-webhook")({
             .update({
               status: "paid",
               pinpay_id: pinpayId ?? row.pinpay_id ?? null,
-              utmify_status: utm.ok ? "paid" : "paid_error",
-              utmify_paid_sent_at: utm.ok ? now : null,
+              purchase_event_id: purchaseEventId,
+              purchase_sent_at: capi.ok ? now : null,
               updated_at: now,
             })
             .eq("id", row.id);
         }
 
-        if (!utm.ok) {
+        if (!capi.ok) {
+          // falha temporaria: libera a reserva para retry com o MESMO event_id
           await admin
             .from("payment_events")
             .delete()
@@ -226,7 +208,12 @@ export const Route = createFileRoute("/api/public/pinpay-webhook")({
             .eq("status", "paid");
         }
 
-        return Response.json({ ok: utm.ok, utmify: utm.ok, error: utm.error ?? null });
+        return Response.json({
+          ok: capi.ok,
+          purchase_sent: capi.ok,
+          events_received: capi.events_received ?? 0,
+          error: capi.error ?? null,
+        });
       },
       GET: async () => Response.json({ ok: true, info: "PinPay webhook endpoint" }),
     },

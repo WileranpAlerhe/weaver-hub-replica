@@ -28,7 +28,8 @@
     if (changed) { try { localStorage.setItem('utmify_tracking', JSON.stringify(store)); } catch (_) {} }
     return store;
   }
-  window.getUtmifyTracking = tracking;
+  window.getTrackingParams = tracking;
+  window.getUtmifyTracking = tracking; // alias historico (mesma leitura de UTMs/src/sck)
 
 
   function collect() {

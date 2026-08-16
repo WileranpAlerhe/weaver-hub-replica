@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { clientIpFrom, getAdmin, sendCapiEvent } from "@/lib/fb.server";
+import { clientIpFrom, getAdmin } from "@/lib/fb.server";
 import { getPinpayToken } from "@/lib/pinpay.server";
 import { trackingFrom } from "@/lib/tracking";
 

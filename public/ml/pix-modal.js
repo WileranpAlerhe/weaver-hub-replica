@@ -122,6 +122,43 @@
     return '';
   }
 
+  /* ---- InitiateCheckout (navegador + Conversions API, mesmo event_id) ---- */
+  function uuid() {
+    try { if (crypto && crypto.randomUUID) return crypto.randomUUID().replace(/-/g, ''); } catch (_) {}
+    return 'r' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+  }
+  function checkoutRef() {
+    if (!window.__CHECKOUT_REF) window.__CHECKOUT_REF = uuid();
+    return window.__CHECKOUT_REF;
+  }
+  function sendInitiateCheckout(amount) {
+    if (window.__IC_SENT) return;            // trava contra clique duplo / reabertura
+    if (!amount || amount < 100) return;
+    window.__IC_SENT = true;
+    var ref = checkoutRef();
+    var eventId = 'ic_' + ref;
+    var value = Number((amount / 100).toFixed(2));
+    try {
+      if (window.fbq) window.fbq('track', 'InitiateCheckout', { value: value, currency: 'BRL' }, { eventID: eventId });
+    } catch (_) {}
+    try {
+      fetch('/api/public/ic', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'same-origin',
+        body: JSON.stringify({
+          external_ref: ref,
+          event_id: eventId,
+          value_cents: amount,
+          event_source_url: location.href,
+          fbp: getCookie('_fbp'),
+          fbc: getFbc(),
+          fbclid: new URLSearchParams(location.search).get('fbclid') || ''
+        })
+      }).catch(function () {});
+    } catch (_) {}
+  }
+
   function fmt(v) { return 'R$ ' + (v / 100).toFixed(2).replace('.', ','); }
 
   function maskCPF(v) {
@@ -221,10 +258,12 @@
           amount: amount,
           description: overlay.dataset.description || 'Pagamento',
           customer: { name: name, email: email, document: doc, phone: phone },
+          external_ref: checkoutRef(),
+          event_id: 'ic_' + checkoutRef(),
           fbp: getCookie('_fbp'),
           fbc: getFbc(),
           event_source_url: location.href,
-          tracking: (function(){ try { return (window.getUtmifyTracking && window.getUtmifyTracking()) || JSON.parse(localStorage.getItem('utmify_tracking')||'{}'); } catch(_) { return {}; } })(),
+          tracking: (function(){ try { return (window.getTrackingParams && window.getTrackingParams()) || {}; } catch(_) { return {}; } })(),
         }),
       });
       var d = await r.json();
@@ -268,6 +307,7 @@
     opts = opts || {};
     var amount = Number(opts.amount || 0);
     var auto = opts.auto !== false;
+    sendInitiateCheckout(amount);
     overlay.dataset.amount = String(amount);
     overlay.dataset.description = opts.description || 'Pagamento';
     $$('[data-pix-amount]').forEach(function (n) { n.textContent = fmt(amount); });

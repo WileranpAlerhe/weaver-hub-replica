@@ -14,6 +14,7 @@ import { Route as PixelfiRouteImport } from './routes/pixelfi'
 import { Route as ApiPixCreateRouteImport } from './routes/api/pix/create'
 import { Route as ApiPixelfiConfigRouteImport } from './routes/api/pixelfi/config'
 import { Route as ApiPixelfiLeadsRouteImport } from './routes/api/pixelfi/leads'
+import { Route as ApiPublicIcRouteImport } from './routes/api/public/ic'
 import { Route as ApiPublicLeadRouteImport } from './routes/api/public/lead'
 import { Route as ApiPublicPinpayWebhookRouteImport } from './routes/api/public/pinpay-webhook'
 import { Route as ApiPublicPixelDotjsRouteImport } from './routes/api/public/pixel[.]js'
@@ -44,6 +45,11 @@ const ApiPixelfiLeadsRoute = ApiPixelfiLeadsRouteImport.update({
   path: '/api/pixelfi/leads',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicIcRoute = ApiPublicIcRouteImport.update({
+  id: '/api/public/ic',
+  path: '/api/public/ic',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ApiPublicLeadRoute = ApiPublicLeadRouteImport.update({
   id: '/api/public/lead',
   path: '/api/public/lead',
@@ -71,6 +77,7 @@ export interface FileRoutesByFullPath {
   '/api/pix/create': typeof ApiPixCreateRoute
   '/api/pixelfi/config': typeof ApiPixelfiConfigRoute
   '/api/pixelfi/leads': typeof ApiPixelfiLeadsRoute
+  '/api/public/ic': typeof ApiPublicIcRoute
   '/api/public/lead': typeof ApiPublicLeadRoute
   '/api/public/pinpay-webhook': typeof ApiPublicPinpayWebhookRoute
   '/api/public/pixel.js': typeof ApiPublicPixelDotjsRoute
@@ -82,6 +89,7 @@ export interface FileRoutesByTo {
   '/api/pix/create': typeof ApiPixCreateRoute
   '/api/pixelfi/config': typeof ApiPixelfiConfigRoute
   '/api/pixelfi/leads': typeof ApiPixelfiLeadsRoute
+  '/api/public/ic': typeof ApiPublicIcRoute
   '/api/public/lead': typeof ApiPublicLeadRoute
   '/api/public/pinpay-webhook': typeof ApiPublicPinpayWebhookRoute
   '/api/public/pixel.js': typeof ApiPublicPixelDotjsRoute
@@ -94,6 +102,7 @@ export interface FileRoutesById {
   '/api/pix/create': typeof ApiPixCreateRoute
   '/api/pixelfi/config': typeof ApiPixelfiConfigRoute
   '/api/pixelfi/leads': typeof ApiPixelfiLeadsRoute
+  '/api/public/ic': typeof ApiPublicIcRoute
   '/api/public/lead': typeof ApiPublicLeadRoute
   '/api/public/pinpay-webhook': typeof ApiPublicPinpayWebhookRoute
   '/api/public/pixel.js': typeof ApiPublicPixelDotjsRoute
@@ -107,6 +116,7 @@ export interface FileRouteTypes {
     | '/api/pix/create'
     | '/api/pixelfi/config'
     | '/api/pixelfi/leads'
+    | '/api/public/ic'
     | '/api/public/lead'
     | '/api/public/pinpay-webhook'
     | '/api/public/pixel.js'
@@ -118,6 +128,7 @@ export interface FileRouteTypes {
     | '/api/pix/create'
     | '/api/pixelfi/config'
     | '/api/pixelfi/leads'
+    | '/api/public/ic'
     | '/api/public/lead'
     | '/api/public/pinpay-webhook'
     | '/api/public/pixel.js'
@@ -129,6 +140,7 @@ export interface FileRouteTypes {
     | '/api/pix/create'
     | '/api/pixelfi/config'
     | '/api/pixelfi/leads'
+    | '/api/public/ic'
     | '/api/public/lead'
     | '/api/public/pinpay-webhook'
     | '/api/public/pixel.js'
@@ -141,6 +153,7 @@ export interface RootRouteChildren {
   ApiPixCreateRoute: typeof ApiPixCreateRoute
   ApiPixelfiConfigRoute: typeof ApiPixelfiConfigRoute
   ApiPixelfiLeadsRoute: typeof ApiPixelfiLeadsRoute
+  ApiPublicIcRoute: typeof ApiPublicIcRoute
   ApiPublicLeadRoute: typeof ApiPublicLeadRoute
   ApiPublicPinpayWebhookRoute: typeof ApiPublicPinpayWebhookRoute
   ApiPublicPixelDotjsRoute: typeof ApiPublicPixelDotjsRoute
@@ -184,6 +197,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPixelfiLeadsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/ic': {
+      id: '/api/public/ic'
+      path: '/api/public/ic'
+      fullPath: '/api/public/ic'
+      preLoaderRoute: typeof ApiPublicIcRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/api/public/lead': {
       id: '/api/public/lead'
       path: '/api/public/lead'
@@ -221,6 +241,7 @@ const rootRouteChildren: RootRouteChildren = {
   ApiPixCreateRoute: ApiPixCreateRoute,
   ApiPixelfiConfigRoute: ApiPixelfiConfigRoute,
   ApiPixelfiLeadsRoute: ApiPixelfiLeadsRoute,
+  ApiPublicIcRoute: ApiPublicIcRoute,
   ApiPublicLeadRoute: ApiPublicLeadRoute,
   ApiPublicPinpayWebhookRoute: ApiPublicPinpayWebhookRoute,
   ApiPublicPixelDotjsRoute: ApiPublicPixelDotjsRoute,
