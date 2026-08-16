@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    <title>Gerente de Envio</title>
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Sora', sans-serif;
+            background-color: #f2f2f2;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .logo {
+            width: 125px;
+            padding: 10px;
+            margin-left: 20px;
+        }
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .manager-card {
+            background-color: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+            text-align: center;
+            margin: 20px 0;
+        }
+        .manager-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+        .manager-subtitle {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .manager-image {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid #ffbf00;
+            margin: 0 auto 10px;
+        }
+        .manager-name {
+            color: #ffbf00;
+            font-weight: bold;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        .manager-badge {
+            background-color: #ffbf00;
+            color: #ffffff;
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 10px 0;
+            font-weight: bold;
+        }
+        .manager-description {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+            margin: 15px 0;
+        }
+        .manager-contact {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 15px 0;
+            font-size: 16px;
+            color: #333;
+        }
+        .button {
+            background-color: #14315c;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            font-family: 'Sora', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content" style="margin-top: -15px;">
+        <div class="manager-card">
+            <h1 style="margin-top: 0px;">Ótimo, quase lá!</h1>
+            <p class="manager-subtitle">
+                Conheça sua Gerente, ela irá auxiliar na ativação do seu cartão e esclarecer todas as suas dúvidas!
+            </p>
+            
+            <div class="card" style="background-color: #fff7db; border-radius: 10px; padding: 20px; padding-bottom: 10px; margin-bottom: 20px; border: 1px solid #ffbf00;">
+                <img src="images/gerente.png" alt="Foto da Gerente" class="manager-image">
+                <p style="color: #666; font-size: 14px; margin: 5px 0;">Gerente</p>
+                <p class="manager-name" style="margin-top: -5px;">Juliana Benedito</p>
+                
+                <div class="manager-badge" style="margin-top: 0px;">
+                    <i class="fas fa-trophy" style="color: #ffffff; margin-right: 5px; "></i>
+                    Melhor gerente 2024 - 2025
+                </div>
+            </div>
+            
+            <div class="manager-contact">
+                <i class="fab fa-whatsapp" style="color: #25D366; margin-right: 10px; font-size: 20px;"></i>
+                <input type="tel" id="whatsapp" name="whatsapp" placeholder="Digite seu WhatsApp aqui" style="border: none; border-bottom: 1px solid #ddd; outline: none; font-family: 'Sora', sans-serif; font-size: 16px; width: 70%; padding: 5px;" maxlength="15" onkeyup="mascaraTelefone(this)">
+            </div>
+            <script>
+                function mascaraTelefone(input) {
+                    let valor = input.value.replace(/\D/g, '');
+                    if (valor.length > 11) valor = valor.substring(0, 11);
+                    
+                    if (valor.length > 0) {
+                        valor = '(' + valor;
+                        
+                        if (valor.length > 3) {
+                            valor = valor.substring(0, 3) + ') ' + valor.substring(3);
+                        }
+                        
+                        if (valor.length > 10) {
+                            valor = valor.substring(0, 10) + '-' + valor.substring(10);
+                        }
+                    }
+                    
+                    input.value = valor;
+                }
+                
+                function salvarTelefone() {
+                    const telefone = document.getElementById('whatsapp').value;
+                    
+                    // Recuperar parâmetros UTM originais
+                    const originalParams = JSON.parse(localStorage.getItem('urlParams') || '{}');
+                    
+                    // Recuperar dados do usuário
+                    const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+                    
+                    // Criar objeto final com todos os parâmetros
+                    const finalParams = { ...originalParams };
+                    
+                    // Adicionar dados do usuário
+                    if (userData.document) {
+                        finalParams.document = userData.document;
+                    }
+                    if (userData.name) {
+                        finalParams.name = userData.name;
+                    }
+                    
+                    // Adicionar telefone
+                    finalParams.telephone = telefone;
+                    
+                    // Salvar dados atualizados
+                    localStorage.setItem('urlParams', JSON.stringify(finalParams));
+                    console.log('Dados atualizados com telefone:', finalParams);
+                    
+                    // Redirecionar com todos os parâmetros
+                    const url = new URL('../12/index.html', window.location.href);
+                    Object.keys(finalParams).forEach(key => {
+                        url.searchParams.append(key, finalParams[key]);
+                    });
+                    window.location.href = url.toString();
+                }
+            </script>
+            
+            <button onclick="salvarTelefone()" class="button">
+                Continuar
+            </button>
+        </div>
+
+        <footer style="padding: 10px 15px; text-align: center; margin-top: 50px; background-color: #f9f9f9; border-top: 1px solid #eaeaea; font-family: 'Sora', sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                    Drogarias Campeã Brasil LTDA | CNPJ: 79.379.491.0008-50
+                </p>
+                <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                    Av. das Nações Unidas, 3000 - Bonfim, Osasco - SP, 06233-903
+                </p>
+                <p style="color: #999; font-size: 9px; margin-top: 5px;">
+                    © 2025 - Todos os direitos reservados
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+
+        function buildUrlWithParams(baseUrl) {
+            const params = getUrlParams();
+            const url = new URL(baseUrl, window.location);
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            return url.toString();
+        }
+    </script>
+
+
+
+
+</body></html>

