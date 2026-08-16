@@ -77,18 +77,18 @@ export function buildFbc(fbclid?: string | null, capturedAtMs?: number): string 
 }
 
 export interface MatchInput {
-  email?: string | null;
-  phone?: string | null;
-  name?: string | null;
-  city?: string | null;
-  state?: string | null;
-  zip?: string | null;
-  country?: string | null;
-  externalId?: string | null;
-  fbp?: string | null;
-  fbc?: string | null;
-  clientIp?: string | null;
-  userAgent?: string | null;
+  email?: string | null | undefined;
+  phone?: string | null | undefined;
+  name?: string | null | undefined;
+  city?: string | null | undefined;
+  state?: string | null | undefined;
+  zip?: string | null | undefined;
+  country?: string | null | undefined;
+  externalId?: string | null | undefined;
+  fbp?: string | null | undefined;
+  fbc?: string | null | undefined;
+  clientIp?: string | null | undefined;
+  userAgent?: string | null | undefined;
 }
 
 /** user_data pronto para a CAPI: hash SHA-256 uma única vez nos campos exigidos. */
