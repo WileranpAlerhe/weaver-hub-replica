@@ -14,13 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      fb_settings: {
+        Row: {
+          access_token: string | null
+          admin_password_hash: string | null
+          ga4_id: string | null
+          id: number
+          pixel_id: string | null
+          test_event_code: string | null
+          updated_at: string
+          webhook_token: string | null
+        }
+        Insert: {
+          access_token?: string | null
+          admin_password_hash?: string | null
+          ga4_id?: string | null
+          id?: number
+          pixel_id?: string | null
+          test_event_code?: string | null
+          updated_at?: string
+          webhook_token?: string | null
+        }
+        Update: {
+          access_token?: string | null
+          admin_password_hash?: string | null
+          ga4_id?: string | null
+          id?: number
+          pixel_id?: string | null
+          test_event_code?: string | null
+          updated_at?: string
+          webhook_token?: string | null
+        }
+        Relationships: []
+      }
+      leads: {
+        Row: {
+          amount_cents: number
+          checkout_event_id: string | null
+          client_ip: string | null
+          cpf: string | null
+          created_at: string
+          email: string | null
+          event_source_url: string | null
+          external_ref: string | null
+          fbc: string | null
+          fbp: string | null
+          id: string
+          name: string | null
+          phone: string | null
+          pinpay_id: string | null
+          purchase_event_id: string | null
+          purchase_sent_at: string | null
+          sck: string | null
+          session_id: string | null
+          src: string | null
+          status: string
+          updated_at: string
+          user_agent: string | null
+          utm_campaign: string | null
+          utm_content: string | null
+          utm_medium: string | null
+          utm_source: string | null
+          utm_term: string | null
+          utmify_paid_sent_at: string | null
+          utmify_refunded_sent_at: string | null
+          utmify_status: string | null
+        }
+        Insert: {
+          amount_cents?: number
+          checkout_event_id?: string | null
+          client_ip?: string | null
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          event_source_url?: string | null
+          external_ref?: string | null
+          fbc?: string | null
+          fbp?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          pinpay_id?: string | null
+          purchase_event_id?: string | null
+          purchase_sent_at?: string | null
+          sck?: string | null
+          session_id?: string | null
+          src?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          utmify_paid_sent_at?: string | null
+          utmify_refunded_sent_at?: string | null
+          utmify_status?: string | null
+        }
+        Update: {
+          amount_cents?: number
+          checkout_event_id?: string | null
+          client_ip?: string | null
+          cpf?: string | null
+          created_at?: string
+          email?: string | null
+          event_source_url?: string | null
+          external_ref?: string | null
+          fbc?: string | null
+          fbp?: string | null
+          id?: string
+          name?: string | null
+          phone?: string | null
+          pinpay_id?: string | null
+          purchase_event_id?: string | null
+          purchase_sent_at?: string | null
+          sck?: string | null
+          session_id?: string | null
+          src?: string | null
+          status?: string
+          updated_at?: string
+          user_agent?: string | null
+          utm_campaign?: string | null
+          utm_content?: string | null
+          utm_medium?: string | null
+          utm_source?: string | null
+          utm_term?: string | null
+          utmify_paid_sent_at?: string | null
+          utmify_refunded_sent_at?: string | null
+          utmify_status?: string | null
+        }
+        Relationships: []
+      }
+      payment_events: {
+        Row: {
+          created_at: string
+          id: string
+          status: string
+          transaction_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          status: string
+          transaction_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          status?: string
+          transaction_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      app_server_secret_ok: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never
