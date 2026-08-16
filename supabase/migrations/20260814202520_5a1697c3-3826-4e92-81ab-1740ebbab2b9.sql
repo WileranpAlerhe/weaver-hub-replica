@@ -1,0 +1,1 @@
+ALTER TABLE public.fb_settings ADD COLUMN IF NOT EXISTS ga4_id text;

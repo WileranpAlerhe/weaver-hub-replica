@@ -1,0 +1,169 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/all.min.css">
+    <title>Cartão</title>
+    <script src="js/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .header img {
+            width: 125px;
+            padding: 10px;
+        }
+        .logo {
+            margin-left: 20px;
+        }
+        .content {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px 20px;
+            text-align: center;
+        }
+        h1 {
+            font-family: 'Sora', sans-serif;
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            font-family: 'Sora', sans-serif;
+            color: #666;
+            font-size: 16px;
+            margin-bottom: 40px;
+        }
+        .info-box {
+            display: flex;
+            align-items: center;
+            background: #ebebeb;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            text-align: left;
+        }
+        .info-box i {
+            font-size: 24px;
+            margin-right: 15px;
+            color: #212121;
+        }
+        .info-text {
+            font-family: 'Sora', sans-serif;
+            font-size: 14px;
+            color: #333;
+        }
+        .button {
+            background: #14315c;
+            color: #ffffff;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-family: 'Sora', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .button:hover {
+            background: #e6cf00;
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content">
+        <h1>Conta digital e cartão de crédito</h1>
+        <p class="subtitle">Tudo o que você precisa em um só lugar</p>
+
+        <div class="info-box">
+            <i class="fas fa-shield-alt"></i>
+            <div class="info-text">Crédito sujeito a análise e aprovação.</div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-database"></i>
+            <div class="info-text">Os dados fornecidos por você a seguir serão utilizados para o processo de aquisição do cartão de crédito.</div>
+        </div>
+
+        <div class="info-box">
+            <i class="fas fa-building"></i>
+            <div class="info-text">Ao prosseguir, você concorda com os termos de uso e política de privacidade do Drogarias Campeã.</div>
+        </div>
+
+        <a href="#" class="button">Li e concordo</a>
+
+        <footer style="padding: 10px 15px; text-align: center; margin-top: 50px; background-color: #f9f9f9; border-top: 1px solid #eaeaea; font-family: 'Sora', sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                    Drogarias Campeã Brasil LTDA | CNPJ: 79.379.491.0008-50
+                </p>
+                <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                    Av. das Nações Unidas, 3000 - Bonfim, Osasco - SP, 06233-903
+                </p>
+                <p style="color: #999; font-size: 9px; margin-top: 5px;">
+                    © 2025 - Todos os direitos reservados
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Função para obter parâmetros da URL
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+    
+        // Função para construir URL com parâmetros
+        function buildUrlWithParams(baseUrl) {
+            const params = getUrlParams();
+            const url = new URL(baseUrl, window.location);
+            
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            return url.toString();
+        }
+    
+        // Adiciona evento de clique em todos os botões
+        document.addEventListener('DOMContentLoaded', function() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    window.location.href = buildUrlWithParams('../4/index.html');
+                });
+            });
+        });
+    </script>
+
+
+
+</body></html>

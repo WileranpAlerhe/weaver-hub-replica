@@ -1,0 +1,1 @@
+DELETE FROM public.fb_settings WHERE id = 1;
