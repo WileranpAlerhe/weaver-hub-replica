@@ -1,6 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { getAdmin, getSettings, type LeadRow } from "@/lib/fb.server";
-import { sendUtmifyOrder, type UtmifyLead } from "@/lib/utmify.server";
+import { getAdmin, getSettings, sendCapiEvent, type LeadRow } from "@/lib/fb.server";
 
 const PAID = ["paid", "approved", "completed", "success", "confirmed", "pago", "aprovado"];
 const REFUNDED = ["refunded", "refund", "chargeback", "reembolsado", "estornado"];
